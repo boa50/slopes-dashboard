@@ -51,9 +51,6 @@ df_zeroes %>%
 
 ############################## Finished cleaning ###############################
 
-nrow(resorts)
-
-  
 resorts %>% 
   count(Country) %>% 
   arrange(desc(n))
@@ -81,3 +78,40 @@ resorts %>%
   # select(Country, Resort, Total.slopes, Price) %>% 
   arrange(desc(Total.slopes)) %>% 
   head(17)
+
+
+resorts %>% 
+  arrange(Price) %>% 
+  head(17)
+
+
+resorts %>% 
+  count(Season) %>% 
+  arrange(desc(n))
+
+resorts %>% 
+  filter(Season == "Year-round")
+
+spatial_limits <- tibble(
+  min_latitude = min(resorts$Latitude),
+  max_latitude = max(resorts$Latitude),
+  min_longitude = min(resorts$Longitude),
+  max_longitude = max(resorts$Longitude)
+)
+
+snow %>% 
+  filter(
+    Latitude >= spatial_limits$min_latitude &
+      Latitude <= spatial_limits$max_latitude &
+      Longitude >= spatial_limits$min_longitude &
+      Longitude <= spatial_limits$max_longitude
+  ) %>% 
+  mutate(
+    abs_latitude = abs(Latitude),
+    abs_longitude = abs(Longitude)
+  ) %>% 
+  filter(Snow >= 90) %>% 
+  group_by(Month) %>% 
+  summarise(lat = min(abs_latitude), long = min(abs_longitude), lat_t = min(Latitude)) %>% 
+  ungroup()
+
