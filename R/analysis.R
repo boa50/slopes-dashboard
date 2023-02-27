@@ -2,6 +2,7 @@ library(dplyr)
 library(stringr)
 library(ggplot2)
 
+
 data_dictionary <- read.csv("data/data_dictionary.csv")
 resorts <- read.csv("data/resorts.csv", fileEncoding = "iso-8859-1")
 snow <- read.csv("data/snow.csv")
@@ -115,3 +116,35 @@ snow %>%
   summarise(lat = min(abs_latitude), long = min(abs_longitude), lat_t = min(Latitude)) %>% 
   ungroup()
 
+
+library(sf)
+library(tmap)
+library(cowplot)
+data(World, land)
+
+resorts_points <- st_as_sf(resorts, coords = c("Longitude", "Latitude"), crs = 4326)
+
+
+mapa <- tm_shape(World) +
+  tm_borders()+
+  tm_shape(land) +
+    tm_raster("elevation", palette = terrain.colors(10)) +
+  tm_shape(resorts_points) + 
+    # tm_dots()
+    tm_bubbles(size = .2, col = "red")
+
+map_grob <- tmap_grob(mapa)
+
+ggplot_test <- resorts %>% 
+  ggplot(aes(x = 1, y = 2)) +
+  geom_point() +
+  theme_classic() +
+  theme(panel.background = element_rect(fill='transparent'),
+        plot.background = element_rect(fill='transparent', color=NA)
+  )
+
+plot_grid(map_grob, ggplot_test)
+
+ggdraw() +
+  draw_plot(map_grob) +
+  draw_plot(ggplot_test)
