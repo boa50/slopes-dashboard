@@ -138,12 +138,12 @@ map_grob <- tmap_grob(mapa)
 ggplot_test <- resorts %>% 
   ggplot(aes(x = 1, y = 2)) +
   geom_point() +
+  scale_x_continuous(limits = c(-180, 180), breaks = c(-180, 0, 180)) +
+  scale_y_continuous(limits = c(-90, 90), breaks = c(-90, 0, 90)) +
   theme_classic() +
   theme(panel.background = element_rect(fill='transparent'),
         plot.background = element_rect(fill='transparent', color=NA)
   )
-
-plot_grid(map_grob, ggplot_test)
 
 ggdraw() +
   draw_plot(map_grob) +
