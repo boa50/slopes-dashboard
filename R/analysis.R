@@ -62,16 +62,23 @@ resorts %>%
   arrange(desc(avg_price))
 
 
+### Getting Highest point
 resorts %>% 
-  select(Country, Resort, Highest.point) %>% 
+  select(Country, Resort, Latitude, Longitude, Highest.point) %>% 
   arrange(desc(Highest.point)) %>% 
-  head(17)
+  head(5)
 
-
+### Getting the Longest run
 resorts %>% 
-  select(Country, Resort, Longest.run) %>% 
+  select(Country, Resort, Latitude, Longitude, Longest.run) %>% 
   arrange(desc(Longest.run)) %>% 
-  head(17)
+  head(5)
+
+### Getting the most total slopes
+resorts %>% 
+  select(Country, Resort, Latitude, Longitude, Total.slopes) %>% 
+  arrange(desc(Total.slopes)) %>% 
+  head(5)
 
 
 resorts %>% 
@@ -86,6 +93,11 @@ resorts %>%
   head(1) %>% 
   select(Country, Resort, Latitude, Longitude, Price)
 
+min(resorts$Longitude)
+
+### Getting the loest longitude
+resorts %>% 
+  filter(Longitude <= -149)
 
 resorts %>% 
   count(Season) %>% 
@@ -137,10 +149,14 @@ mapa <- tm_shape(World) +
 map_grob <- tmap_grob(mapa)
 
 ### Points gotten
+# Lowest longitude
 # Most expensive
+# Highest point in Europe
+# Longest run (with others)
+# Total slopes
 interest_points <- tibble(
-  Latitude = c(39.60488),
-  Longitude = c(-106.51500)
+  Latitude = c(61.10327, 39.60488, 45.96301, 41.83441, 45.39139),
+  Longitude = c(-149.7407, -106.51500, 7.715412, 23.484170, 6.574283)
 )
 
 ggplot_test <- interest_points %>% 
