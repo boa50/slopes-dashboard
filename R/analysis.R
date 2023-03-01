@@ -2,6 +2,7 @@ library(dplyr)
 library(stringr)
 library(ggplot2)
 
+### The task is to build a one-page dashboard to help skiers find their ideal destination.
 
 data_dictionary <- read.csv("data/data_dictionary.csv")
 resorts <- read.csv("data/resorts.csv", fileEncoding = "iso-8859-1")
@@ -152,7 +153,8 @@ data(World, land)
 # resorts_points <- st_as_sf(resorts, coords = c("Longitude", "Latitude"), crs = 4326)
 
 mapa <- tm_shape(World) +
-  tm_borders(col = "#c9c9c8") #+
+  tm_borders(col = "#c9c9c8") +
+  tm_layout(frame = FALSE)
   # tm_shape(land) +
   #   tm_raster("elevation", palette = terrain.colors(10)) +
   # tm_shape(resorts_points) + 
@@ -214,7 +216,7 @@ ggplot_test <- interest_points %>%
             aes(x = x, y = y), 
             linewidth = 5, 
             colour = "#eff1f4") +
-  geom_point(size = 1, colour = "blue") +
+  geom_point(size = 1, colour = "#c9cecb") +
   scale_x_continuous(limits = c(-180, 180), 
                      breaks = c(-180, 0, 180),
                      expand = expansion(mult = 0)) +
@@ -228,7 +230,7 @@ ggplot_test <- interest_points %>%
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        axis.line = element_line(colour = "transparent")
+        # axis.line = element_line(colour = "transparent")
   )
 
 ggdraw() +
