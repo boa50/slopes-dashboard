@@ -80,10 +80,11 @@ resorts %>%
   arrange(desc(Total.slopes)) %>% 
   head(17)
 
-
+### Getting the most expensive resort
 resorts %>% 
-  arrange(Price) %>% 
-  head(17)
+  arrange(desc(Price)) %>% 
+  head(1) %>% 
+  select(Country, Resort, Latitude, Longitude, Price)
 
 
 resorts %>% 
@@ -127,17 +128,24 @@ resorts_points <- st_as_sf(resorts, coords = c("Longitude", "Latitude"), crs = 4
 
 mapa <- tm_shape(World) +
   tm_borders()+
-  tm_shape(land) +
-    tm_raster("elevation", palette = terrain.colors(10)) +
+  # tm_shape(land) +
+  #   tm_raster("elevation", palette = terrain.colors(10)) +
   tm_shape(resorts_points) + 
     # tm_dots()
     tm_bubbles(size = .2, col = "red")
 
 map_grob <- tmap_grob(mapa)
 
-ggplot_test <- resorts %>% 
-  ggplot(aes(x = 0, y = 0)) +
-  geom_point() +
+### Points gotten
+# Most expensive
+interest_points <- tibble(
+  Latitude = c(39.60488),
+  Longitude = c(-106.51500)
+)
+
+ggplot_test <- interest_points %>% 
+  ggplot(aes(x = Longitude, y = Latitude)) +
+  geom_point(shape = 23, size = 7, colour = "blue", stroke = 3) +
   scale_x_continuous(limits = c(-180, 180), 
                      breaks = c(-180, 0, 180),
                      expand = expansion(mult = 0)) +
