@@ -136,13 +136,22 @@ mapa <- tm_shape(World) +
 map_grob <- tmap_grob(mapa)
 
 ggplot_test <- resorts %>% 
-  ggplot(aes(x = 1, y = 2)) +
+  ggplot(aes(x = 0, y = 0)) +
   geom_point() +
-  scale_x_continuous(limits = c(-180, 180), breaks = c(-180, 0, 180)) +
-  scale_y_continuous(limits = c(-90, 90), breaks = c(-90, 0, 90)) +
+  scale_x_continuous(limits = c(-180, 180), 
+                     breaks = c(-180, 0, 180),
+                     expand = expansion(mult = 0)) +
+  scale_y_continuous(limits = c(-90, 90), 
+                     breaks = c(-90, 0, 90),
+                     expand = expansion(mult = 0)) +
   theme_classic() +
-  theme(panel.background = element_rect(fill='transparent'),
-        plot.background = element_rect(fill='transparent', color=NA)
+  theme(panel.background = element_rect(fill = "transparent"),
+        plot.background = element_rect(fill = "transparent", colour = NA),
+        plot.margin = margin(l = 19, t = 25, r = 20, b = 25),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(colour = "transparent")
   )
 
 ggdraw() +
