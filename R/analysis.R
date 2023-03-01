@@ -149,16 +149,14 @@ library(tmap)
 library(cowplot)
 data(World, land)
 
-resorts_points <- st_as_sf(resorts, coords = c("Longitude", "Latitude"), crs = 4326)
-
+# resorts_points <- st_as_sf(resorts, coords = c("Longitude", "Latitude"), crs = 4326)
 
 mapa <- tm_shape(World) +
-  tm_borders()+
+  tm_borders(col = "#c9c9c8") #+
   # tm_shape(land) +
   #   tm_raster("elevation", palette = terrain.colors(10)) +
-  tm_shape(resorts_points) + 
-    # tm_dots()
-    tm_bubbles(size = .2, col = "red")
+  # tm_shape(resorts_points) + 
+    # tm_bubbles(size = .2, col = "#82a4b3", alpha = 0.5, shape = 8)
 
 map_grob <- tmap_grob(mapa)
 
@@ -201,8 +199,21 @@ slope_line_points <- interest_points %>%
 
 ggplot_test <- interest_points %>% 
   ggplot(aes(x = Longitude, y = Latitude)) +
-  geom_line(data = slope_line_points, aes(x = x, y = y), linewidth = 4, colour = "grey") +
-  geom_line(data = slope_line_points, aes(x = x, y = y), linewidth = 3, colour = "#f5f5f5") +
+  # Got the snow unicode representation from here: https://www.compart.com/en/unicode/search?q=snow#characters
+  geom_point(data = resorts, 
+             aes(x = Longitude, y = Latitude), 
+             shape = "\u2744", 
+             size = 5, 
+             colour = "#82a4b3", 
+             alpha = 0.5) +
+  geom_line(data = slope_line_points, 
+            aes(x = x, y = y), 
+            linewidth = 6, 
+            colour = "#c9cecb") +
+  geom_line(data = slope_line_points, 
+            aes(x = x, y = y), 
+            linewidth = 5, 
+            colour = "#eff1f4") +
   geom_point(size = 1, colour = "blue") +
   scale_x_continuous(limits = c(-180, 180), 
                      breaks = c(-180, 0, 180),
