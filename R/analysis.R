@@ -230,7 +230,7 @@ ggplot_test <- interest_points %>%
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        # axis.line = element_line(colour = "transparent")
+        axis.line = element_line(colour = "transparent")
   )
 
 ggdraw() +
