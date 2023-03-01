@@ -81,11 +81,26 @@ resorts %>%
   head(5)
 
 
+### Getting resorts that offer skiing on summer
 resorts %>% 
-  # select(Country, Resort, Total.slopes, Beginner.slopes, Intermediate.slopes, Difficult.slopes) %>% 
-  # select(Country, Resort, Total.slopes, Price) %>% 
-  arrange(desc(Total.slopes)) %>% 
-  head(17)
+  filter(Summer.skiing == "Yes") 
+
+### Getting the most total slopes
+resorts %>% 
+  select(Country, Resort, Latitude, Longitude, Lowest.point) %>% 
+  arrange(Lowest.point) %>% 
+  head(5)
+
+### Getting the lowest point in Asia
+resorts %>% 
+  filter(Continent == "Asia") %>% 
+  arrange(Lowest.point) %>% 
+  head(5)
+
+### Getting places where we can go skiing at night
+resorts %>% 
+  filter(Continent == "Oceania") %>% 
+  filter(Nightskiing == "Yes")
 
 ### Getting the most expensive resort
 resorts %>% 
@@ -93,9 +108,8 @@ resorts %>%
   head(1) %>% 
   select(Country, Resort, Latitude, Longitude, Price)
 
-min(resorts$Longitude)
 
-### Getting the loest longitude
+### Getting the lowest longitude
 resorts %>% 
   filter(Longitude <= -149)
 
@@ -151,17 +165,45 @@ map_grob <- tmap_grob(mapa)
 ### Points gotten
 # Lowest longitude
 # Most expensive
+# Summer skiing on South America
+# Total slopes
 # Highest point in Europe
 # Longest run (with others)
-# Total slopes
+# Lowest point in Asia
+# Nightskiing in Oceania (with others)
 interest_points <- tibble(
-  Latitude = c(61.10327, 39.60488, 45.96301, 41.83441, 45.39139),
-  Longitude = c(-149.7407, -106.51500, 7.715412, 23.484170, 6.574283)
+  Latitude = c(61.10327, 
+               39.60488, 
+               -33.35296, 
+               45.39139, 
+               45.96301, 
+               41.83441, 
+               43.34197, 
+               -44.91589),
+  Longitude = c(-149.7407, 
+                -106.51500, 
+                -70.248678, 
+                6.574283, 
+                7.715412, 
+                23.484170,
+                142.38319, 
+                168.7396)
 )
+
+### Added fake points to make the curve smoother
+slope_line_points <- interest_points %>% 
+  add_row(Latitude = 33.34197, Longitude = 75) %>% 
+  add_row(Latitude = 55.10327, Longitude = -155.7407) %>% 
+  add_row(Latitude = -52.91589, Longitude = 175.7396) %>% 
+  do(as.data.frame(spline(x = .[["Longitude"]], 
+                          y = .[["Latitude"]], 
+                          n = 100)))
 
 ggplot_test <- interest_points %>% 
   ggplot(aes(x = Longitude, y = Latitude)) +
-  geom_point(shape = 23, size = 7, colour = "blue", stroke = 3) +
+  geom_line(data = slope_line_points, aes(x = x, y = y), linewidth = 4, colour = "grey") +
+  geom_line(data = slope_line_points, aes(x = x, y = y), linewidth = 3, colour = "#f5f5f5") +
+  geom_point(size = 1, colour = "blue") +
   scale_x_continuous(limits = c(-180, 180), 
                      breaks = c(-180, 0, 180),
                      expand = expansion(mult = 0)) +
