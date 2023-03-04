@@ -171,7 +171,7 @@ data(World)
 
 map_grob <- (tm_shape(World) +
   tm_borders(col = "#c9c9c8") +
-  tm_layout(frame = FALSE)) %>% 
+  tm_layout(frame = FALSE, bg.color = "transparent")) %>% 
   tmap_grob()
 
 
@@ -212,7 +212,7 @@ slope <- interest_points %>%
   theme_classic() +
   theme(panel.background = element_rect(fill = "transparent"),
         plot.background = element_rect(fill = "transparent", colour = NA),
-        plot.margin = margin(l = 19, t = 25, r = 20, b = 25),
+        plot.margin = margin(l = 19, t = 25, r = 20, b = 20),
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
@@ -222,3 +222,16 @@ slope <- interest_points %>%
 ggdraw() +
   draw_plot(map_grob) +
   draw_plot(slope)
+
+save_plot <- function(plot_name = "myplot", background = NULL) {
+  ggsave(
+    paste(plot_name, ".png", sep = ""),
+    width = 3840,
+    height = 1974,
+    units = "px",
+    dpi = 425,
+    bg = {{ background }}
+  )
+}
+
+save_plot("slopes_map")
