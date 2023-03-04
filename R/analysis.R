@@ -51,17 +51,7 @@ df_zeroes %>%
   ggplot(aes(y = column,  x = quantity)) +
   geom_col()
 
-############################## Finished cleaning ###############################
-
-resorts %>% 
-  count(Country) %>% 
-  arrange(desc(n))
-
-resorts %>% 
-  group_by(Country) %>% 
-  summarise(avg_price = mean(Price)) %>% 
-  arrange(desc(avg_price))
-
+########################### Getting interest points ############################
 
 ### Getting Highest point
 resorts %>% 
@@ -80,7 +70,6 @@ resorts %>%
   select(Country, Resort, Latitude, Longitude, Total.slopes) %>% 
   arrange(desc(Total.slopes)) %>% 
   head(5)
-
 
 ### Getting resorts that offer skiing on summer
 resorts %>% 
@@ -109,7 +98,6 @@ resorts %>%
   head(1) %>% 
   select(Country, Resort, Latitude, Longitude, Price)
 
-
 ### Getting the lowest longitude
 resorts %>% 
   filter(Longitude <= -149)
@@ -120,47 +108,6 @@ resorts %>%
 
 resorts %>% 
   filter(Season == "Year-round")
-
-spatial_limits <- tibble(
-  min_latitude = min(resorts$Latitude),
-  max_latitude = max(resorts$Latitude),
-  min_longitude = min(resorts$Longitude),
-  max_longitude = max(resorts$Longitude)
-)
-
-snow %>% 
-  filter(
-    Latitude >= spatial_limits$min_latitude &
-      Latitude <= spatial_limits$max_latitude &
-      Longitude >= spatial_limits$min_longitude &
-      Longitude <= spatial_limits$max_longitude
-  ) %>% 
-  mutate(
-    abs_latitude = abs(Latitude),
-    abs_longitude = abs(Longitude)
-  ) %>% 
-  filter(Snow >= 90) %>% 
-  group_by(Month) %>% 
-  summarise(lat = min(abs_latitude), long = min(abs_longitude), lat_t = min(Latitude)) %>% 
-  ungroup()
-
-
-library(sf)
-library(tmap)
-library(cowplot)
-data(World, land)
-
-# resorts_points <- st_as_sf(resorts, coords = c("Longitude", "Latitude"), crs = 4326)
-
-mapa <- tm_shape(World) +
-  tm_borders(col = "#c9c9c8") +
-  tm_layout(frame = FALSE)
-  # tm_shape(land) +
-  #   tm_raster("elevation", palette = terrain.colors(10)) +
-  # tm_shape(resorts_points) + 
-    # tm_bubbles(size = .2, col = "#82a4b3", alpha = 0.5, shape = 8)
-
-map_grob <- tmap_grob(mapa)
 
 ### Points gotten
 # Lowest longitude
@@ -190,6 +137,45 @@ interest_points <- tibble(
                 168.7396)
 )
 
+######################## Playing with the snow dataset #########################
+
+# spatial_limits <- tibble(
+#   min_latitude = min(resorts$Latitude),
+#   max_latitude = max(resorts$Latitude),
+#   min_longitude = min(resorts$Longitude),
+#   max_longitude = max(resorts$Longitude)
+# )
+# 
+# snow %>% 
+#   filter(
+#     Latitude >= spatial_limits$min_latitude &
+#       Latitude <= spatial_limits$max_latitude &
+#       Longitude >= spatial_limits$min_longitude &
+#       Longitude <= spatial_limits$max_longitude
+#   ) %>% 
+#   mutate(
+#     abs_latitude = abs(Latitude),
+#     abs_longitude = abs(Longitude)
+#   ) %>% 
+#   filter(Snow >= 90) %>% 
+#   group_by(Month) %>% 
+#   summarise(lat = min(abs_latitude), long = min(abs_longitude), lat_t = min(Latitude)) %>% 
+#   ungroup()
+
+############################### Plotting the map ###############################
+
+library(sf)
+library(tmap)
+library(cowplot)
+data(World)
+
+map_grob <- (tm_shape(World) +
+  tm_borders(col = "#c9c9c8") +
+  tm_layout(frame = FALSE)) %>% 
+  tmap_grob()
+
+
+
 ### Added fake points to make the curve smoother
 slope_line_points <- interest_points %>% 
   add_row(Latitude = 33.34197, Longitude = 75) %>% 
@@ -199,7 +185,7 @@ slope_line_points <- interest_points %>%
                           y = .[["Latitude"]], 
                           n = 100)))
 
-ggplot_test <- interest_points %>% 
+slope <- interest_points %>% 
   ggplot(aes(x = Longitude, y = Latitude)) +
   # Got the snow unicode representation from here: https://www.compart.com/en/unicode/search?q=snow#characters
   geom_point(data = resorts, 
@@ -235,4 +221,4 @@ ggplot_test <- interest_points %>%
 
 ggdraw() +
   draw_plot(map_grob) +
-  draw_plot(ggplot_test)
+  draw_plot(slope)
