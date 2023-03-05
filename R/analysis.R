@@ -53,6 +53,26 @@ df_zeroes %>%
 
 ########################### Getting interest points ############################
 
+### Getting the lowest longitude
+resorts %>% 
+  filter(Longitude <= -149)
+
+### Getting the most expensive resort
+resorts %>% 
+  arrange(desc(Price)) %>% 
+  head(1) %>% 
+  select(Country, Resort, Latitude, Longitude, Price)
+
+### Getting resorts that offer skiing on summer
+resorts %>% 
+  filter(Summer.skiing == "Yes") 
+
+### Getting the most total slopes
+resorts %>% 
+  select(Country, Resort, Latitude, Longitude, Total.slopes) %>% 
+  arrange(desc(Total.slopes)) %>% 
+  head(5)
+
 ### Getting Highest point
 resorts %>% 
   select(Country, Resort, Latitude, Longitude, Highest.point) %>% 
@@ -65,16 +85,6 @@ resorts %>%
   arrange(desc(Longest.run)) %>% 
   head(5)
 
-### Getting the most total slopes
-resorts %>% 
-  select(Country, Resort, Latitude, Longitude, Total.slopes) %>% 
-  arrange(desc(Total.slopes)) %>% 
-  head(5)
-
-### Getting resorts that offer skiing on summer
-resorts %>% 
-  filter(Summer.skiing == "Yes") 
-
 ### Getting the lowest point in Asia
 resorts %>% 
   filter(Continent == "Asia") %>% 
@@ -85,23 +95,6 @@ resorts %>%
 resorts %>% 
   filter(Continent == "Oceania") %>% 
   filter(Nightskiing == "Yes")
-
-### Getting the most expensive resort
-resorts %>% 
-  arrange(desc(Price)) %>% 
-  head(1) %>% 
-  select(Country, Resort, Latitude, Longitude, Price)
-
-### Getting the lowest longitude
-resorts %>% 
-  filter(Longitude <= -149)
-
-resorts %>% 
-  count(Season) %>% 
-  arrange(desc(n))
-
-resorts %>% 
-  filter(Season == "Year-round")
 
 ### Points gotten
 # Lowest longitude
@@ -195,7 +188,6 @@ slope <- interest_points %>%
             aes(x = x, y = y), 
             linewidth = 5, 
             colour = "#eff1f4") +
-  # geom_point(size = 1, colour = "#c9cecb") +
   geom_label(aes(label = n_order),
              size = 4,
              colour = "#607d8b",
