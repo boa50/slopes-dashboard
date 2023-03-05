@@ -75,12 +75,6 @@ resorts %>%
 resorts %>% 
   filter(Summer.skiing == "Yes") 
 
-### Getting the most total slopes
-resorts %>% 
-  select(Country, Resort, Latitude, Longitude, Lowest.point) %>% 
-  arrange(Lowest.point) %>% 
-  head(5)
-
 ### Getting the lowest point in Asia
 resorts %>% 
   filter(Continent == "Asia") %>% 
@@ -130,11 +124,12 @@ interest_points <- tibble(
   Longitude = c(-149.7407, 
                 -106.51500, 
                 -70.248678, 
-                6.574283, 
-                7.715412, 
+                3.574283, 
+                10.715412, 
                 23.484170,
                 142.38319, 
-                168.7396)
+                168.7396),
+  n_order = c(1:8)
 )
 
 ######################## Playing with the snow dataset #########################
@@ -171,10 +166,8 @@ data(World)
 
 map_grob <- (tm_shape(World) +
   tm_borders(col = "#c9c9c8") +
-  tm_layout(frame = FALSE, bg.color = "transparent")) %>% 
+  tm_layout(frame = FALSE, bg.color = "#82a4b3")) %>% 
   tmap_grob()
-
-
 
 ### Added fake points to make the curve smoother
 slope_line_points <- interest_points %>% 
@@ -192,7 +185,7 @@ slope <- interest_points %>%
              aes(x = Longitude, y = Latitude), 
              shape = "\u2744", 
              size = 5, 
-             colour = "#82a4b3", 
+             colour = "#f9fafc", 
              alpha = 0.5) +
   geom_line(data = slope_line_points, 
             aes(x = x, y = y), 
@@ -202,7 +195,12 @@ slope <- interest_points %>%
             aes(x = x, y = y), 
             linewidth = 5, 
             colour = "#eff1f4") +
-  geom_point(size = 1, colour = "#c9cecb") +
+  # geom_point(size = 1, colour = "#c9cecb") +
+  geom_label(aes(label = n_order),
+             size = 4,
+             colour = "#607d8b",
+             fill = "transparent",
+             label.size = 0) +
   scale_x_continuous(limits = c(-180, 180), 
                      breaks = c(-180, 0, 180),
                      expand = expansion(mult = 0)) +
